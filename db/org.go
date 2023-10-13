@@ -5,6 +5,7 @@ import (
 	"talentprotocol/types"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (db *DB) InsertOrganization(org *types.Organization) error {
@@ -31,6 +32,38 @@ func (db *DB) GetOrgDetails(orgLogin *types.OrgLogin) (*types.Organization, erro
 }
 func (db *DB) CreateJobOpening(org *types.JobOpening) error {
 	_, err := db.orgOpeningsCollection.InsertOne(context.TODO(), org)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (db *DB) GetAssignmentForOrgOpening(openingID string) (*types.OrgAssignments, error) {
+	objectID, err := primitive.ObjectIDFromHex(openingID)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"opening_id": objectID}
+	var assignment *types.OrgAssignments
+
+	err = db.orgAssignmentsCollection.FindOne(context.TODO(), filter).Decode(&assignment)
+	if err != nil {
+		return nil, err
+	}
+
+	return assignment, nil
+}
+
+func (db *DB) InsertOrgAssignment(assignment *types.OrgAssignments, openingID string) error {
+	objectID, err := primitive.ObjectIDFromHex(openingID)
+	if err != nil {
+		return err
+	}
+
+	assignment.JobOpeningID = objectID
+	_, err = db.orgAssignmentsCollection.InsertOne(context.TODO(), assignment)
 	if err != nil {
 		return err
 	}

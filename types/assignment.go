@@ -3,11 +3,11 @@ package types
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type OrgAssignments struct {
-	ID                    primitive.ObjectID `bson:"_id,omitempty"`
-	AssignmentName        string             `bson:"assignment_name"`
-	CodeProblemStatement  string             `bson:"code_problem_statement"`
-	TechnicalQuestions    []string           `bson:"technical_questions"`
-	CodeAnalysisQuestions []string           `bson:"code_analysis_questions"`
+	JobOpeningID          primitive.ObjectID `bson:"opening_id" json:"opening_id,omitempty"`
+	AssignmentName        string             `bson:"assignment_name" json:"assignment_name"`
+	CodeProblemStatement  string             `bson:"code_problem_statement" json:"code_problem_statement"`
+	TechnicalQuestions    []string           `bson:"technical_questions" json:"technical_questions"`
+	CodeAnalysisQuestions []string           `bson:"code_analysis_questions" json:"code_analysis_questions"`
 }
 
 type CandidateSubmission struct {

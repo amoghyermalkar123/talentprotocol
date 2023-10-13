@@ -48,7 +48,7 @@ func (a *Api) Login(c *gin.Context) {
 	profileEmail := userDetails.Email
 	userInfo, err := a.DB.GetCandidateDetails(userDetails)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": "failed", "error": fmt.Errorf("failed db operation: %v", err).Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"status": "failed", "error": fmt.Errorf("failed db operation: %v", err).Error()})
 		return
 	}
 

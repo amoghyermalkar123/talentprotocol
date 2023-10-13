@@ -36,6 +36,8 @@ func main() {
 		orgApi.POST("/login", api.OrgLogin)
 		orgApi.POST("/register", api.OrgSignup)
 		orgApi.POST("/openings", api.CreateJobOpening)
+		orgApi.POST("/openings/:opening-id/assignment", api.CreateOrgAssignment)
+		orgApi.GET("/:orgname/openings/:opening-id/assignment", api.GetOrgAssignmentByID)
 	}
 
 	godotenv.Load()
