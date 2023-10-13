@@ -29,6 +29,7 @@ func main() {
 	userApi := r.Group("/v1/candidate")
 	{
 		userApi.GET("/:candidate-email/home", api.HomePage)
+		userApi.POST("/:candidate-email/:opening-id/:assignment-id/submit", api.SubmitAssignment)
 	}
 
 	orgApi := r.Group("/v1/org")
@@ -37,7 +38,7 @@ func main() {
 		orgApi.POST("/register", api.OrgSignup)
 		orgApi.POST("/openings", api.CreateJobOpening)
 		orgApi.POST("/openings/:opening-id/assignment", api.CreateOrgAssignment)
-		orgApi.GET("/:orgname/openings/:opening-id/assignment", api.GetOrgAssignmentByID)
+		orgApi.GET("/:orgname/openings/:opening-id/assignment", api.GetOrgAssignmentByOpeningID)
 	}
 
 	godotenv.Load()
