@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -61,7 +62,7 @@ func (db *DB) GetJobOpeningsNotAppliedTo(candidateEmail string) ([]*types.JobOpe
 	}
 
 	// Get a list of job opening IDs that the candidate has applied to
-	var appliedOpeningIDs []string
+	var appliedOpeningIDs []primitive.ObjectID
 	cursor, err := db.candidateJobApplicationsCollection.Find(context.TODO(), bson.M{"candidate_email": candidateEmail})
 	if err != nil {
 		return nil, err
@@ -113,14 +114,14 @@ func (db *DB) InsertCandidateSubmission(candEmail, jobOpeningID, asgID string, s
 		return err
 	}
 
-	// jobID, err = primitive.ObjectIDFromHex(jobOpeningID)
-	// if err != nil {
-	// 	return err
-	// }
+	jobID, err := primitive.ObjectIDFromHex(jobOpeningID)
+	if err != nil {
+		return err
+	}
 
 	db.insertCandidateJobApplication(&types.CandidateJobApplication{
 		CandidateEmail:     candEmail,
-		JobOpeningID:       jobOpeningID,
+		JobOpeningID:       jobID,
 		JobApplicationDate: time.Now(),
 		Status:             Open.String(),
 	})
