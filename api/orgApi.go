@@ -72,9 +72,9 @@ func (a *Api) CreateJobOpening(c *gin.Context) {
 }
 
 func (a *Api) GetOrgAssignmentByOpeningID(c *gin.Context) {
-	assignmentId := c.Param("opening-id")
+	openingID := c.Param("opening-id")
 
-	assignment, err := a.DB.GetAssignmentForOrgOpening(assignmentId)
+	assignment, err := a.DB.GetAssignmentForOrgOpening(openingID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "error": fmt.Errorf("failed db operation: %v", err).Error()})
 		return
