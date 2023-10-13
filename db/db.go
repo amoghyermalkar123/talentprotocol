@@ -19,6 +19,7 @@ type DB struct {
 	orgOpeningsCollection              *mongo.Collection
 	orgAssignmentsCollection           *mongo.Collection
 	candidateJobApplicationsCollection *mongo.Collection
+	candidateSubmissionsCollection     *mongo.Collection
 }
 
 func GetDB(host string) (*DB, error) {
@@ -38,5 +39,6 @@ func GetDB(host string) (*DB, error) {
 		orgOpeningsCollection:              client.Database("talentprotocol").Collection("org_job_openings"),
 		orgAssignmentsCollection:           client.Database("talentprotocol").Collection("org_assignments"),
 		candidateJobApplicationsCollection: client.Database("talentprotocol").Collection("candidate_job_applications"),
+		candidateSubmissionsCollection:     client.Database("talentprotocol").Collection("candidate_submissions"),
 	}, nil
 }

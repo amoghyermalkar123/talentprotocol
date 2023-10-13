@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"errors"
-	"fmt"
 	"talentprotocol/types"
 	"time"
 
@@ -70,7 +69,7 @@ func (db *DB) GetJobOpeningsNotAppliedTo(candidateEmail string) ([]*types.JobOpe
 
 	defer cursor.Close(context.TODO())
 	for cursor.Next(context.TODO()) {
-		var app *types.JobApplication
+		var app *types.CandidateJobApplication
 		if err := cursor.Decode(&app); err != nil {
 			return nil, err
 		}
@@ -96,7 +95,6 @@ func (db *DB) GetJobOpeningsNotAppliedTo(candidateEmail string) ([]*types.JobOpe
 		if err := cursor.Decode(&opening); err != nil {
 			return nil, err
 		}
-		fmt.Println(opening)
 		unappliedOpenings = append(unappliedOpenings, opening)
 	}
 
@@ -105,4 +103,35 @@ func (db *DB) GetJobOpeningsNotAppliedTo(candidateEmail string) ([]*types.JobOpe
 	}
 
 	return unappliedOpenings, nil
+}
+
+func (db *DB) InsertCandidateSubmission(candEmail, jobOpeningID, asgID string, submission *types.CandidateSubmission) error {
+	submission.SubmittedAssignmentID = asgID
+	submission.SubmissionBy = candEmail
+	_, err := db.candidateSubmissionsCollection.InsertOne(context.TODO(), submission)
+	if err != nil {
+		return err
+	}
+
+	// jobID, err = primitive.ObjectIDFromHex(jobOpeningID)
+	// if err != nil {
+	// 	return err
+	// }
+
+	db.insertCandidateJobApplication(&types.CandidateJobApplication{
+		CandidateEmail:     candEmail,
+		JobOpeningID:       jobOpeningID,
+		JobApplicationDate: time.Now(),
+		Status:             Open.String(),
+	})
+
+	return nil
+}
+
+func (db *DB) insertCandidateJobApplication(application *types.CandidateJobApplication) error {
+	_, err := db.candidateJobApplicationsCollection.InsertOne(context.TODO(), application)
+	if err != nil {
+		return err
+	}
+	return nil
 }
