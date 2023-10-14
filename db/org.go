@@ -30,6 +30,7 @@ func (db *DB) GetOrgDetails(orgLogin *types.OrgLogin) (*types.Organization, erro
 
 	return response, err
 }
+
 func (db *DB) CreateJobOpening(org *types.JobOpening) error {
 	_, err := db.orgOpeningsCollection.InsertOne(context.TODO(), org)
 	if err != nil {

@@ -13,7 +13,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	db, err := db.GetDB("db")
+	db, err := db.GetDB("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
