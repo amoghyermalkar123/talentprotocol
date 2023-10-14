@@ -37,6 +37,7 @@ func main() {
 		orgApi.POST("/login", api.OrgLogin)
 		orgApi.POST("/register", api.OrgSignup)
 		orgApi.POST("/openings", api.CreateJobOpening)
+		orgApi.GET("/:orgname/openings", api.GetAllOrgOpenings)
 		orgApi.POST("/openings/:opening-id/assignment", api.CreateOrgAssignment)
 		orgApi.GET("/:orgname/openings/:opening-id/assignment", api.GetOrgAssignmentByOpeningID)
 	}

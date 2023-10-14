@@ -40,6 +40,41 @@ func (db *DB) CreateJobOpening(org *types.JobOpening) error {
 	return nil
 }
 
+func (db *DB) GetAllJobOpenings(orgName string) ([]*types.OrgOpeningsWithAssigs, error) {
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{"org_name": orgName},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "org_assignments",
+				"localField":   "_id",
+				"foreignField": "opening_id",
+				"as":           "assignments",
+			},
+		},
+	}
+
+	cursor, err := db.orgOpeningsCollection.Aggregate(context.TODO(), pipeline)
+
+	if err != nil {
+		return nil, err
+	}
+
+	allOpenings := []*types.OrgOpeningsWithAssigs{}
+
+	defer cursor.Close(context.TODO())
+	for cursor.Next(context.TODO()) {
+		var ope *types.OrgOpeningsWithAssigs
+		if err := cursor.Decode(&ope); err != nil {
+			return nil, err
+		}
+		allOpenings = append(allOpenings, ope)
+	}
+
+	return allOpenings, nil
+}
+
 func (db *DB) GetAssignmentForOrgOpening(openingID string) (*types.OrgAssignments, error) {
 	objectID, err := primitive.ObjectIDFromHex(openingID)
 	if err != nil {

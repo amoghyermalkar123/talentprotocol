@@ -99,3 +99,15 @@ func (a *Api) CreateOrgAssignment(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"status": "succcess"})
 }
+
+func (a *Api) GetAllOrgOpenings(c *gin.Context) {
+	orgID := c.Param("orgname")
+
+	openings, err := a.DB.GetAllJobOpenings(orgID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "error": fmt.Errorf("failed db operation: %v", err).Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"openings": openings})
+}

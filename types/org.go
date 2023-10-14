@@ -27,3 +27,13 @@ type JobOpening struct {
 	JobDescription string             `bson:"jd" json:"jd"`
 	JobPostedAt    time.Time          `bson:"job_posted_at" json:"job_posted_at,omitempty"`
 }
+
+type OrgOpeningsWithAssigs struct {
+	ID             string             `bson:"_id,omitempty" json:"_id"`
+	OrganizationID primitive.ObjectID `bson:"org_id" json:"org_id"`
+	OrgName        string             `bson:"org_name" json:"org_name"`
+	OpeningName    string             `bson:"opening_name" json:"opening_name"`
+	JobDescription string             `bson:"jd" json:"jd"`
+	JobPostedAt    time.Time          `bson:"job_posted_at" json:"job_posted_at,omitempty"`
+	Assignments    []OrgAssignments   `bson:"assignments" json:"assignments"`
+}
