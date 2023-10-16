@@ -1,14 +1,18 @@
-package main
+package assessmentpipeline
 
 import (
 	"context"
 	"fmt"
+	"os"
 
-	openai "github.com/sashabaranov/go-openai"
+	"github.com/joho/godotenv"
+	"github.com/sashabaranov/go-openai"
 )
 
-func main() {
-	client := openai.NewClient("")
+func OpenAICall() {
+	godotenv.Load()
+	client := openai.NewClient(os.Getenv("OPEN_AI_SECRET_KEY"))
+
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
@@ -28,4 +32,5 @@ func main() {
 	}
 
 	fmt.Println(resp.Choices[0].Message.Content)
+
 }
