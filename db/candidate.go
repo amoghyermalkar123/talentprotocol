@@ -106,14 +106,7 @@ func (db *DB) GetJobOpeningsNotAppliedTo(candidateEmail string) ([]*types.JobOpe
 	return unappliedOpenings, nil
 }
 
-func (db *DB) InsertCandidateSubmission(candEmail, jobOpeningID, asgID string, submission *types.CandidateSubmission) error {
-	submission.SubmittedAssignmentID = asgID
-	submission.SubmissionBy = candEmail
-	_, err := db.candidateSubmissionsCollection.InsertOne(context.TODO(), submission)
-	if err != nil {
-		return err
-	}
-
+func (db *DB) InsertCandidateSubmission(candEmail, jobOpeningID string, submission *types.CandidateSubmission) error {
 	jobID, err := primitive.ObjectIDFromHex(jobOpeningID)
 	if err != nil {
 		return err
@@ -124,8 +117,8 @@ func (db *DB) InsertCandidateSubmission(candEmail, jobOpeningID, asgID string, s
 		JobOpeningID:       jobID,
 		JobApplicationDate: time.Now(),
 		Status:             Open.String(),
+		Answers:            submission.Answers,
 	})
-
 	return nil
 }
 

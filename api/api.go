@@ -81,9 +81,8 @@ func (a *Api) SubmitAssignment(c *gin.Context) {
 
 	jobOpeningID := c.Param("opening-id")
 	candEmail := c.Param("candidate-email")
-	asgID := c.Param("assignment-id")
 
-	if err := a.DB.InsertCandidateSubmission(candEmail, jobOpeningID, asgID, submission); err != nil {
+	if err := a.DB.InsertCandidateSubmission(candEmail, jobOpeningID, submission); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "error": fmt.Errorf("failed db operation: %v", err).Error()})
 		return
 	}

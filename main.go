@@ -13,7 +13,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	db, err := db.GetDB("db")
+	db, err := db.GetDB("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +29,7 @@ func main() {
 	userApi := r.Group("/v1/candidate")
 	{
 		userApi.GET("/:candidate-email/home", api.HomePage)
-		userApi.POST("/:candidate-email/:opening-id/:assignment-id/submit", api.SubmitAssignment)
+		userApi.POST("/:candidate-email/:opening-id/submit", api.SubmitAssignment)
 	}
 
 	orgApi := r.Group("/v1/org")
@@ -38,8 +38,8 @@ func main() {
 		orgApi.POST("/register", api.OrgSignup)
 		orgApi.POST("/openings", api.CreateJobOpening)
 		orgApi.GET("/:orgname/openings", api.GetAllOrgOpenings)
-		orgApi.POST("/openings/:opening-id/assignment", api.CreateOrgAssignment)
-		orgApi.GET("/:orgname/openings/:opening-id/assignment", api.GetOrgAssignmentByOpeningID)
+		// orgApi.POST("/openings/:opening-id/assignment", api.CreateOrgAssignment)
+		// orgApi.GET("/:orgname/openings/:opening-id/assignment", api.GetOrgAssignmentByOpeningID)
 	}
 
 	godotenv.Load()

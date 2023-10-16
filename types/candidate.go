@@ -23,4 +23,10 @@ type CandidateJobApplication struct {
 	JobOpeningID       primitive.ObjectID `json:"job_opening_id" bson:"job_opening_id"`
 	JobApplicationDate time.Time          `json:"job_application_date" bson:"job_application_date"`
 	Status             string             `json:"status" bson:"status"`
+	Answers            struct {
+		Code                string   `bson:"code" json:"code"`
+		Rating              int      `bson:"rating" json:"rating,omitempty"`
+		CodeAnalysisAnswers []string `bson:"code_analysis_answers" json:"code_analysis_answers,omitempty"`
+		TechnicalAnswers    []string `bson:"technical_answers" json:"technical_answers,omitempty"`
+	} `bson:"answers" json:"answers"`
 }

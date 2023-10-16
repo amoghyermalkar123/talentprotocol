@@ -63,41 +63,13 @@ func (a *Api) CreateJobOpening(c *gin.Context) {
 	}
 
 	opening.JobPostedAt = time.Now()
-	if err := a.DB.CreateJobOpening(opening); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "error": fmt.Errorf("failed db operation: %v", err).Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
-}
-
-func (a *Api) GetOrgAssignmentByOpeningID(c *gin.Context) {
-	openingID := c.Param("opening-id")
-
-	assignment, err := a.DB.GetAssignmentForOrgOpening(openingID)
+	openingID, err := a.DB.CreateJobOpening(opening)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "error": fmt.Errorf("failed db operation: %v", err).Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"assignment": assignment})
-}
-
-func (a *Api) CreateOrgAssignment(c *gin.Context) {
-	assignment := &types.OrgAssignments{}
-	if err := c.Bind(assignment); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"status": "failed", "error": fmt.Errorf("failed request operation: %v", err).Error()})
-		return
-	}
-
-	openingID := c.Param("opening-id")
-	err := a.DB.InsertOrgAssignment(assignment, openingID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "error": fmt.Errorf("failed db operation: %v", err).Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"status": "succcess"})
+	c.JSON(http.StatusOK, gin.H{"status": "success", "opening_id": openingID})
 }
 
 func (a *Api) GetAllOrgOpenings(c *gin.Context) {
