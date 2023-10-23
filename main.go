@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"talentprotocol/api"
+	assessmentpipeline "talentprotocol/assessment-pipeline"
 	"talentprotocol/db"
 
 	"github.com/gin-contrib/cors"
@@ -12,17 +13,18 @@ import (
 )
 
 func main() {
+	godotenv.Load()
 	r := gin.Default()
 	db, err := db.GetDB("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
 	api := api.Api{
-		DB: db,
+		DB:                  db,
+		AssessmentPipelines: assessmentpipeline.NewAssessmentPipeline(db),
 	}
 
 	r.Use(cors.Default())
-
 	r.POST("/login", api.Login)
 	r.POST("/signup", api.Signup)
 
@@ -38,10 +40,8 @@ func main() {
 		orgApi.POST("/register", api.OrgSignup)
 		orgApi.POST("/openings", api.CreateJobOpening)
 		orgApi.GET("/:orgname/openings", api.GetAllOrgOpenings)
-		// orgApi.POST("/openings/:opening-id/assignment", api.CreateOrgAssignment)
-		// orgApi.GET("/:orgname/openings/:opening-id/assignment", api.GetOrgAssignmentByOpeningID)
 	}
 
-	godotenv.Load()
+	go api.AssessmentPipelines.AssessmentPipeline()
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

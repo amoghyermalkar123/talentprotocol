@@ -1,8 +1,11 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	assessmentpipeline "talentprotocol/assessment-pipeline"
 	"talentprotocol/db"
 	"talentprotocol/middlewares"
 	"talentprotocol/types"
@@ -12,8 +15,9 @@ import (
 )
 
 type Api struct {
-	DB  *db.DB
-	Log *zerolog.Logger
+	DB                  *db.DB
+	Log                 *zerolog.Logger
+	AssessmentPipelines *assessmentpipeline.AssessmentPipeline
 }
 
 func (a *Api) Signup(c *gin.Context) {
@@ -82,11 +86,27 @@ func (a *Api) SubmitAssignment(c *gin.Context) {
 	jobOpeningID := c.Param("opening-id")
 	candEmail := c.Param("candidate-email")
 
+	opening, err := a.DB.GetJobOpeningByID(jobOpeningID)
+	if err != nil {
+		log.Println(err)
+	}
+
+	submission.Assignment = &opening.Assignment
+
 	if err := a.DB.InsertCandidateSubmission(candEmail, jobOpeningID, submission); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "failed", "error": fmt.Errorf("failed db operation: %v", err).Error()})
 		return
 	}
 
-	// TODO: add ai-engine analysis to include code analysis and rating in the response
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
+
+	data, err := json.Marshal(submission)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = a.AssessmentPipelines.Nats.Publish(a.AssessmentPipelines.EvaluationTopic, data)
+	if err != nil {
+		log.Println(err)
+	}
 }

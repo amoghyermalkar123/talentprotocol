@@ -63,3 +63,15 @@ func (db *DB) GetAllJobOpenings(orgName string) ([]*types.JobOpening, error) {
 
 	return allOpenings, nil
 }
+
+func (db *DB) GetJobOpeningByID(id string) (*types.JobOpening, error) {
+	opening := &types.JobOpening{}
+
+	err := db.orgOpeningsCollection.FindOne(context.TODO(), bson.M{}).Decode(opening)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return opening, nil
+}

@@ -9,7 +9,7 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-func OpenAICall() {
+func openAICall(prompt string) {
 	godotenv.Load()
 	client := openai.NewClient(os.Getenv("OPEN_AI_SECRET_KEY"))
 
@@ -20,7 +20,7 @@ func OpenAICall() {
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
-					Content: "Hello!",
+					Content: prompt,
 				},
 			},
 		},
@@ -32,5 +32,4 @@ func OpenAICall() {
 	}
 
 	fmt.Println(resp.Choices[0].Message.Content)
-
 }
