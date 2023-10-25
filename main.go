@@ -15,7 +15,7 @@ import (
 func main() {
 	godotenv.Load()
 	r := gin.Default()
-	db, err := db.GetDB("dbt ")
+	db, err := db.GetDB("db")
 	if err != nil {
 		panic(err)
 	}
