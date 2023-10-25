@@ -15,7 +15,7 @@ import (
 func main() {
 	godotenv.Load()
 	r := gin.Default()
-	db, err := db.GetDB("127.0.0.1")
+	db, err := db.GetDB("dbt ")
 	if err != nil {
 		panic(err)
 	}
